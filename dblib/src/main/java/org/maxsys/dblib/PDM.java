@@ -95,7 +95,7 @@ public class PDM {
         public void run() {
             isConnPoolRunning = true;
             while (isConnPoolRunning) {
-                //System.out.println("ConnPool is alive... Connections count:" + Connections.size());
+                //System.out.println("ConnPool is alive. Connections count:" + Connections.size());
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException ex) {
