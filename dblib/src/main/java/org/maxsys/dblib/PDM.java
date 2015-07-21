@@ -261,7 +261,7 @@ public class PDM {
             st = conn.createStatement();
             result = st.executeUpdate(sql);
         } catch (SQLException ex) {
-            Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         } finally {
             try {
@@ -421,6 +421,23 @@ public class PDM {
             s_second = "0" + s_second;
         }
         return s_year + "-" + s_month + "-" + s_day + " " + s_hour + ":" + s_minute + ":" + s_second + ".0";
+    }
+
+    public static String getDTStringDateOnly(Calendar ca) {
+        Integer year = ca.get(Calendar.YEAR);
+        String s_year = year.toString();
+        Integer month = ca.get(Calendar.MONTH);
+        month++;
+        String s_month = month.toString();
+        if (s_month.length() < 2) {
+            s_month = "0" + s_month;
+        }
+        Integer day = ca.get(Calendar.DAY_OF_MONTH);
+        String s_day = day.toString();
+        if (s_day.length() < 2) {
+            s_day = "0" + s_day;
+        }
+        return s_year + "-" + s_month + "-" + s_day;
     }
 
     public static Calendar getCalendarFromTime(Timestamp time) {
