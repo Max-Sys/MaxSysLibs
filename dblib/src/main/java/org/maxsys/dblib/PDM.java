@@ -456,22 +456,22 @@ public class PDM {
     }
 
     public static String getHexString(String str) {
-        String hexstr = "";
+        StringBuilder hexstr = new StringBuilder();
         int i = 0;
         while (i < str.length()) {
             Integer ic = str.codePointAt(i);
-            hexstr = hexstr + Integer.toHexString(ic);
-            hexstr = hexstr + "|";
+            hexstr.append(Integer.toHexString(ic));
+            hexstr.append("|");
             i++;
         }
-        return hexstr;
+        return hexstr.toString();
     }
 
     public static String getStringFromHex(String hexstr) {
         if (hexstr == null) {
             return "";
         }
-        String str = "";
+        StringBuilder str = new StringBuilder();
         String s = "";
         Integer ci;
         char c;
@@ -488,12 +488,12 @@ public class PDM {
                     return "HEX parsing error";
                 }
                 c = (char) ci.intValue();
-                str = str + c;
+                str.append(c);
                 s = "";
                 i++;
             }
         }
-        return str;
+        return str.toString();
     }
 
     public static boolean isConnectionOk(String instance) {
