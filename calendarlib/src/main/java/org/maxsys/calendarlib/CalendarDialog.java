@@ -42,10 +42,27 @@ public class CalendarDialog extends javax.swing.JDialog {
     private int Month;
     private int Year;
     private int Day;
+    private String Lang;
 
-    public CalendarDialog(java.awt.Frame parent) {
+    public CalendarDialog(java.awt.Frame parent, String Lang) {
         super(parent, true);
         initComponents();
+
+        if (Lang.toLowerCase().equals("en") || Lang.toLowerCase().equals("ru")) {
+            this.Lang = Lang.toLowerCase();
+        } else {
+            this.Lang = "en";
+        }
+
+        if (this.Lang.equals("ru")) {
+            jTable2.setValueAt("Пн", 0, 0);
+            jTable2.setValueAt("Вт", 0, 1);
+            jTable2.setValueAt("Ср", 0, 2);
+            jTable2.setValueAt("Чт", 0, 3);
+            jTable2.setValueAt("Пт", 0, 4);
+            jTable2.setValueAt("Сб", 0, 5);
+            jTable2.setValueAt("Вс", 0, 6);
+        }
 
         myCellRenderer.setHorizontalAlignment(JLabel.CENTER);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -87,6 +104,9 @@ public class CalendarDialog extends javax.swing.JDialog {
 
         int firstDay = ca.get(Calendar.DAY_OF_WEEK);
         firstDay--;
+        if (this.Lang.equals("ru")) {
+            firstDay--;
+        }
         ca.add(Calendar.DAY_OF_YEAR, -firstDay);
 
         boolean dayset = false;
@@ -132,7 +152,12 @@ public class CalendarDialog extends javax.swing.JDialog {
             dds = "0" + dds;
         }
 
-        jTextField2.setText(yyyy + "-" + mms + "-" + dds);
+        if (this.Lang.equals("en")) {
+            jTextField2.setText(yyyy + "-" + mms + "-" + dds);
+        }
+        if (this.Lang.equals("ru")) {
+            jTextField2.setText(dds + "." + mms + "." + yyyy);
+        }
     }
 
     @SuppressWarnings("unchecked")
