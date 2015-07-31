@@ -1,7 +1,6 @@
 # MaxSysLibs
 
-calendarlib - a simple Date Picker.
-Usage of calendarlib:
+calendarlib - a simple Date Picker. Usage sample:
 
 	CalendarDialog dlg = new CalendarDialog(this, "en");
         Calendar ca = dlg.getCalendar();
