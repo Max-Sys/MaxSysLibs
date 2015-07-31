@@ -425,28 +425,24 @@ public class CalendarDialog extends javax.swing.JDialog {
     private void jButton36ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton36ActionPerformed
         int mm = jComboBox1.getSelectedIndex();
         mm--;
-
         if (mm < 0) {
             mm = 11;
             int yyyy = Integer.valueOf(jTextField1.getText());
             yyyy--;
             jTextField1.setText(String.valueOf(yyyy));
         }
-
         jComboBox1.setSelectedIndex(mm);
     }//GEN-LAST:event_jButton36ActionPerformed
 
     private void jButton37ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton37ActionPerformed
         int mm = jComboBox1.getSelectedIndex();
         mm++;
-
         if (mm > 11) {
             mm = 0;
             int yyyy = Integer.valueOf(jTextField1.getText());
             yyyy++;
             jTextField1.setText(String.valueOf(yyyy));
         }
-
         jComboBox1.setSelectedIndex(mm);
     }//GEN-LAST:event_jButton37ActionPerformed
 
