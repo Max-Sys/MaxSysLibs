@@ -55,6 +55,19 @@ public class CalendarDialog extends javax.swing.JDialog {
         }
 
         if (this.Lang.equals("ru")) {
+            jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[]{
+                "Январь",
+                "Февраль",
+                "Март",
+                "Апрель",
+                "Май",
+                "Июнь",
+                "Июль",
+                "Август",
+                "Сентябрь",
+                "Октябрь",
+                "Ноябрь",
+                "Декабрь"}));
             jTable2.setValueAt("Пн", 0, 0);
             jTable2.setValueAt("Вт", 0, 1);
             jTable2.setValueAt("Ср", 0, 2);
