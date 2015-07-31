@@ -55,7 +55,7 @@ public class CalendarDialog extends javax.swing.JDialog {
         }
 
         if (this.Lang.equals("ru")) {
-            this.setTitle("Выберите дату");
+            this.setTitle("Выберите дату!");
             jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[]{
                 "Январь",
                 "Февраль",
