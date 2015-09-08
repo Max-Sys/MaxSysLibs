@@ -76,6 +76,7 @@ public class CalendarDialog extends javax.swing.JDialog {
             jTable2.setValueAt("Пт", 0, 4);
             jTable2.setValueAt("Сб", 0, 5);
             jTable2.setValueAt("Вс", 0, 6);
+            jButton40.setText("Сегодня");
         }
 
         myCellRenderer.setHorizontalAlignment(JLabel.CENTER);
