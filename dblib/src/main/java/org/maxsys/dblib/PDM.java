@@ -105,6 +105,11 @@ public class PDM {
                     for (ConnState state : Connections.keySet()) {
                         if (state.isFree()) {
                             if (state.getFreeCount() >= 5) {
+                                try {
+                                    Connections.get(state).close();
+                                } catch (SQLException ex) {
+                                    Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                                 Connections.remove(state);
                             } else {
                                 state.incFreeCount();
@@ -386,9 +391,9 @@ public class PDM {
             }
         }
         return "PDM info"
-                + ": Interfaces - " + connInstances.size()
-                + ", Connections - " + Connections.size()
-                + ", Free - " + freeConn;
+                + ": Interfaces: " + connInstances.size()
+                + ", Connections: " + Connections.size()
+                + ", Free: " + freeConn;
     }
 
     public static String getDTString(Calendar ca) {
