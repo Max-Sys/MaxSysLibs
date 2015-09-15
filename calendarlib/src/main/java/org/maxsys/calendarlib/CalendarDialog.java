@@ -43,6 +43,8 @@ public class CalendarDialog extends javax.swing.JDialog {
     private int Year;
     private int Day;
     private String Lang;
+    private Calendar caNow;
+    private boolean isOkPressed = false;
 
     public CalendarDialog(java.awt.Frame parent, String Lang, Calendar setCa) {
         super(parent, true);
@@ -87,19 +89,16 @@ public class CalendarDialog extends javax.swing.JDialog {
         jTable2.setDefaultRenderer(String.class, centerRenderer);
 
         if (setCa == null) {
-            Calendar ca = Calendar.getInstance();
-            this.Month = ca.get(Calendar.MONTH);
-            jComboBox1.setSelectedIndex(this.Month);
-            this.Year = ca.get(Calendar.YEAR);
-            jTextField1.setText(String.valueOf(this.Year));
-            this.Day = ca.get(Calendar.DAY_OF_MONTH);
+            caNow = Calendar.getInstance();
         } else {
-            this.Month = setCa.get(Calendar.MONTH);
-            jComboBox1.setSelectedIndex(this.Month);
-            this.Year = setCa.get(Calendar.YEAR);
-            jTextField1.setText(String.valueOf(this.Year));
-            this.Day = setCa.get(Calendar.DAY_OF_MONTH);
+            caNow = setCa;
         }
+        this.Month = caNow.get(Calendar.MONTH);
+        jComboBox1.setSelectedIndex(this.Month);
+        this.Year = caNow.get(Calendar.YEAR);
+        jTextField1.setText(String.valueOf(this.Year));
+        this.Day = caNow.get(Calendar.DAY_OF_MONTH);
+
         refreshButtons();
 
         setLocationRelativeTo(null);
@@ -107,14 +106,18 @@ public class CalendarDialog extends javax.swing.JDialog {
     }
 
     public Calendar getCalendar() {
-        int row = jTable1.getSelectedRow();
-        int col = jTable1.getSelectedColumn();
-        Object v = jTable1.getValueAt(row, col);
+        if (isOkPressed) {
+            int row = jTable1.getSelectedRow();
+            int col = jTable1.getSelectedColumn();
+            Object v = jTable1.getValueAt(row, col);
 
-        if (jTextField2.getText().equals("---")) {
-            return null;
+            if (jTextField2.getText().equals("---")) {
+                return null;
+            } else {
+                return (Calendar) v;
+            }
         } else {
-            return (Calendar) v;
+            return null;
         }
     }
 
@@ -123,7 +126,7 @@ public class CalendarDialog extends javax.swing.JDialog {
         this.Month = jComboBox1.getSelectedIndex();
 
         MyDCalendar ca = new MyDCalendar(this.Year, this.Month, 1);
-        Calendar caNow = Calendar.getInstance();
+        //Calendar caNow = Calendar.getInstance();
 
         int firstDay = ca.get(Calendar.DAY_OF_WEEK);
         firstDay--;
@@ -406,16 +409,17 @@ public class CalendarDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton40ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton40ActionPerformed
-        Calendar ca = Calendar.getInstance();
-        this.Month = ca.get(Calendar.MONTH);
+        caNow = Calendar.getInstance();
+        this.Month = caNow.get(Calendar.MONTH);
         jComboBox1.setSelectedIndex(this.Month);
-        this.Year = ca.get(Calendar.YEAR);
+        this.Year = caNow.get(Calendar.YEAR);
         jTextField1.setText(String.valueOf(this.Year));
-        this.Day = ca.get(Calendar.DAY_OF_MONTH);
+        this.Day = caNow.get(Calendar.DAY_OF_MONTH);
         refreshButtons();
     }//GEN-LAST:event_jButton40ActionPerformed
 
     private void jButton39ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton39ActionPerformed
+        isOkPressed = true;
         dispose();
     }//GEN-LAST:event_jButton39ActionPerformed
 
