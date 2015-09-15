@@ -10,7 +10,7 @@ public class TimeDialog extends javax.swing.JDialog {
     private int mm;
     private boolean isOk = false;
 
-    public TimeDialog(java.awt.Frame parent, String Lang) {
+    public TimeDialog(java.awt.Frame parent, String Lang, String hhmm) {
         super(parent, true);
         initComponents();
 
@@ -31,6 +31,18 @@ public class TimeDialog extends javax.swing.JDialog {
 
         setnow();
 
+        if (hhmm != null) {
+            String[] hhmms = hhmm.trim().split(":");
+            if (hhmms.length == 2) {
+                try {
+                    this.hh = Integer.valueOf(hhmms[0]);
+                    this.mm = Integer.valueOf(hhmms[1]);
+                } catch (Exception ex) {
+                }
+                RefreshHM();
+            }
+        }
+
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -47,7 +59,7 @@ public class TimeDialog extends javax.swing.JDialog {
             }
             return hhs + ":" + mms;
         } else {
-            return "00:00";
+            return null;
         }
     }
 
