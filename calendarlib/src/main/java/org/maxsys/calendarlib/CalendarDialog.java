@@ -44,7 +44,7 @@ public class CalendarDialog extends javax.swing.JDialog {
     private int Day;
     private String Lang;
 
-    public CalendarDialog(java.awt.Frame parent, String Lang) {
+    public CalendarDialog(java.awt.Frame parent, String Lang, Calendar setCa) {
         super(parent, true);
         initComponents();
 
@@ -86,12 +86,20 @@ public class CalendarDialog extends javax.swing.JDialog {
         jTable1.setDefaultRenderer(Object.class, myCellRenderer);
         jTable2.setDefaultRenderer(String.class, centerRenderer);
 
-        Calendar ca = Calendar.getInstance();
-        this.Month = ca.get(Calendar.MONTH);
-        jComboBox1.setSelectedIndex(this.Month);
-        this.Year = ca.get(Calendar.YEAR);
-        jTextField1.setText(String.valueOf(this.Year));
-        this.Day = ca.get(Calendar.DAY_OF_MONTH);
+        if (setCa == null) {
+            Calendar ca = Calendar.getInstance();
+            this.Month = ca.get(Calendar.MONTH);
+            jComboBox1.setSelectedIndex(this.Month);
+            this.Year = ca.get(Calendar.YEAR);
+            jTextField1.setText(String.valueOf(this.Year));
+            this.Day = ca.get(Calendar.DAY_OF_MONTH);
+        } else {
+            this.Month = setCa.get(Calendar.MONTH);
+            jComboBox1.setSelectedIndex(this.Month);
+            this.Year = setCa.get(Calendar.YEAR);
+            jTextField1.setText(String.valueOf(this.Year));
+            this.Day = setCa.get(Calendar.DAY_OF_MONTH);
+        }
         refreshButtons();
 
         setLocationRelativeTo(null);
