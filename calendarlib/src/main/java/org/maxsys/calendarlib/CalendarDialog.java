@@ -50,7 +50,7 @@ public class CalendarDialog extends javax.swing.JDialog {
         super(parent, true);
         initComponents();
 
-        if (Lang.toLowerCase().equals("en") || Lang.toLowerCase().equals("ru")) {
+        if (Lang != null && (Lang.toLowerCase().equals("en") || Lang.toLowerCase().equals("ru"))) {
             this.Lang = Lang.toLowerCase();
         } else {
             this.Lang = "en";
