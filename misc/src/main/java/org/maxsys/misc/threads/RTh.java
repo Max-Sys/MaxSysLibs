@@ -7,16 +7,24 @@ public abstract class RTh implements Runnable {
 
     public RTh() {
         thread = new Thread(this);
+        String name = Thread.currentThread().getName() + " -> " + thread.getName();
+        if (name.length() < 256) {
+            thread.setName(name);
+        }
     }
 
     public RTh(String name) {
+        name = Thread.currentThread().getName() + " -> " + name;
+        if (name.length() > 255) {
+            name = "..." + name.substring(name.length() - 252);
+        }
         thread = new Thread(this, name);
     }
 
     public abstract void WhileRunningDo();
 
     @Override
-    public void run() {
+    public final void run() {
         while (isRunning) {
             WhileRunningDo();
         }
