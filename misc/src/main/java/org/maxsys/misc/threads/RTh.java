@@ -1,45 +1,56 @@
 package org.maxsys.misc.threads;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public abstract class RTh implements Runnable {
 
     private volatile boolean isRunning;
     private volatile Thread thread;
+    private final int THREAD_NAME_MAX_LENGTH = 255;
 
     public RTh() {
         thread = new Thread(this);
         String name = Thread.currentThread().getName() + " -> " + thread.getName();
-        if (name.length() < 256) {
+        if (name.length() <= THREAD_NAME_MAX_LENGTH) {
             thread.setName(name);
         }
     }
 
     public RTh(String name) {
         name = Thread.currentThread().getName() + " -> " + name;
-        if (name.length() > 255) {
-            name = "..." + name.substring(name.length() - 252);
+        if (name.length() > THREAD_NAME_MAX_LENGTH) {
+            name = "..." + name.substring(name.length() - THREAD_NAME_MAX_LENGTH - 3);
         }
         thread = new Thread(this, name);
     }
+
+    public abstract int THREAD_SLEEP_MILLS();
 
     public abstract void WhileRunningDo();
 
     @Override
     public final void run() {
         while (isRunning) {
+            try {
+                Thread.sleep(THREAD_SLEEP_MILLS());
+            } catch (InterruptedException ex) {
+                Logger.getLogger(RTh.class.getName()).log(Level.SEVERE, null, ex);
+            }
             WhileRunningDo();
         }
     }
 
-    public void Start() {
+    public final void Start() {
         isRunning = true;
         thread.start();
     }
 
-    public void Stop() {
+    public final void Stop() {
         isRunning = false;
     }
 
-    public boolean StopAndWait(long mills) {
+    public final boolean StopAndWait(long mills) {
         Stop();
         try {
             Thread.sleep(mills);
@@ -48,7 +59,7 @@ public abstract class RTh implements Runnable {
         return isEnded();
     }
 
-    public void StopAndForget(long timeout) {
+    public final void StopAndForget(long timeout) {
         new Thread(() -> {
             Stop();
             try {
@@ -61,11 +72,11 @@ public abstract class RTh implements Runnable {
         }, thread.getName() + " - S&F").start();
     }
 
-    public void Kill() {
+    public final void Kill() {
         thread.stop();
     }
 
-    public boolean isEnded() {
+    public final boolean isEnded() {
         return !thread.isAlive();
     }
 }
