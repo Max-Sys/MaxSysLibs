@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 public abstract class RTh implements Runnable {
 
     private volatile boolean isRunning;
+    private volatile boolean isPaused;
     private volatile Thread thread;
     private final int THREAD_NAME_MAX_LENGTH = 255;
 
@@ -38,14 +39,27 @@ public abstract class RTh implements Runnable {
             } catch (InterruptedException ex) {
                 Logger.getLogger(RTh.class.getName()).log(Level.SEVERE, null, ex);
             }
-            WhileRunningDo();
+            if (!isPaused) {
+                WhileRunningDo();
+            }
         }
         onStop();
     }
 
     public final void Start() {
         isRunning = true;
-        thread.start();
+        isPaused = false;
+        if (!thread.isAlive()) {
+            thread.start();
+        }
+    }
+
+    public final void Pause() {
+        isPaused = true;
+    }
+
+    public final void Go() {
+        isPaused = false;
     }
 
     public final void Stop() {
