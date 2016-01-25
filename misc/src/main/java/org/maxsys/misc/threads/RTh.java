@@ -31,6 +31,7 @@ public abstract class RTh implements Runnable {
 
     @Override
     public final void run() {
+        onStart();
         while (isRunning) {
             try {
                 Thread.sleep(THREAD_SLEEP_MILLS());
@@ -39,6 +40,7 @@ public abstract class RTh implements Runnable {
             }
             WhileRunningDo();
         }
+        onStop();
     }
 
     public final void Start() {
@@ -74,6 +76,12 @@ public abstract class RTh implements Runnable {
 
     public final void Kill() {
         thread.stop();
+    }
+
+    public void onStop() {
+    }
+
+    public void onStart() {
     }
 
     public final boolean isEnded() {
