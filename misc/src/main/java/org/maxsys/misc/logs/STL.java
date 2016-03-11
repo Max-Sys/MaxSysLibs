@@ -46,6 +46,11 @@ public class STL {
         LineCounter++;
     }
 
+    public synchronized static void LogSo(String logText) {
+        System.out.println(logText);
+        Log(logText);
+    }
+
     public synchronized static String getLog(String filter) {
         StringBuilder log = new StringBuilder();
         try {
@@ -57,11 +62,9 @@ public class STL {
                             log.append(line);
                             log.append("\n");
                         }
-                    } else {
-                        if (line.toLowerCase().contains(filter.toLowerCase())) {
-                            log.append(line);
-                            log.append("\n");
-                        }
+                    } else if (line.toLowerCase().contains(filter.toLowerCase())) {
+                        log.append(line);
+                        log.append("\n");
                     }
                 }
             }

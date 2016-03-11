@@ -1,8 +1,5 @@
 package org.maxsys.misc.threads;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public abstract class RTh implements Runnable {
 
     private volatile boolean isRunning;
@@ -34,13 +31,12 @@ public abstract class RTh implements Runnable {
     public final void run() {
         onStart();
         while (isRunning) {
+            if (!isPaused) {
+                WhileRunningDo();
+            }
             try {
                 Thread.sleep(THREAD_SLEEP_MILLS());
             } catch (InterruptedException ex) {
-                Logger.getLogger(RTh.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (!isPaused) {
-                WhileRunningDo();
             }
         }
         onStop();
@@ -63,6 +59,7 @@ public abstract class RTh implements Runnable {
     }
 
     public final void Stop() {
+        thread.interrupt();
         isRunning = false;
     }
 
@@ -78,9 +75,15 @@ public abstract class RTh implements Runnable {
     public final void StopAndForget(long timeout) {
         new Thread(() -> {
             Stop();
-            try {
-                Thread.sleep(timeout);
-            } catch (InterruptedException ex) {
+            int to = (int) (timeout / 1000);
+            while (to > 0) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                }
+                if (isEnded()) {
+                    return;
+                }
             }
             if (!isEnded()) {
                 Kill();
