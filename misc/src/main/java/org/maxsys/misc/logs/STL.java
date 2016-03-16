@@ -16,18 +16,21 @@ import java.util.logging.Logger;
 
 public class STL {
 
-    private static String fileTimeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Calendar.getInstance().getTime());
-    private static int LineCounter = 0;
+    private static final String FILE_TIME_STAMP = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Calendar.getInstance().getTime());
+    private static volatile int LogFileCounter = 0;
+    private static volatile int LineCounter = 0;
+    private static volatile int LineCounterMax = 1000;
 
     public synchronized static void Log(String logText) {
-        if (LineCounter > 1000) {
-            fileTimeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Calendar.getInstance().getTime());
+        if (LineCounter >= LineCounterMax) {
+            LogFileCounter += 1;
             LineCounter = 0;
         }
 
         BufferedWriter bw = null;
         try {
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTimeStamp + ".log", true), "UTF-8"));
+            String filen = FILE_TIME_STAMP + " - " + String.format("%04d", LogFileCounter) + ".log";
+            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filen, true), "UTF-8"));
         } catch (UnsupportedEncodingException | FileNotFoundException ex) {
             Logger.getLogger(STL.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,7 +57,8 @@ public class STL {
     public synchronized static String getLog(String filter) {
         StringBuilder log = new StringBuilder();
         try {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileTimeStamp + ".log"), "UTF-8"))) {
+            String filen = FILE_TIME_STAMP + " - " + String.format("%04d", LogFileCounter) + ".log";
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filen), "UTF-8"))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     if (filter.startsWith("-")) {
@@ -76,5 +80,9 @@ public class STL {
             Logger.getLogger(STL.class.getName()).log(Level.SEVERE, null, ex);
         }
         return log.toString();
+    }
+
+    public static void setLineCounterMax(int LineCounterMax) {
+        STL.LineCounterMax = LineCounterMax;
     }
 }
