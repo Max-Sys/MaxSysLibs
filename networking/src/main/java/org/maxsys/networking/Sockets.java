@@ -90,4 +90,11 @@ public class Sockets {
         return data;
     }
 
+    public static void sendCmd(Socket socket, CmdArgs cmdArgs) {
+        Sockets.sendData(socket, cmdArgs.getCmdArgsData());
+    }
+
+    public static CmdArgs receiveCmd(Socket socket) {
+        return new CmdArgs(Sockets.receiveData(socket));
+    }
 }
