@@ -17,7 +17,7 @@ public class CmdArgs {
     }
 
     public CmdArgs(byte[] data) {
-        if (data.length < 8) {
+        if (data == null || data.length < 8) {
             this.cmd = "";
             this.args = new byte[0];
             return;

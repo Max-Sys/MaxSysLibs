@@ -25,27 +25,6 @@ public class Sockets {
         }
     }
 
-    public static void sendString(Socket socket, String string) {
-        try {
-            socket.getOutputStream().write((string + "\000").getBytes());
-        } catch (IOException ex) {
-            Logger.getLogger(Sockets.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public static String receiveString(Socket socket) {
-        int ci;
-        StringBuilder si = new StringBuilder();
-        try {
-            while ((ci = socket.getInputStream().read()) > 0) {
-                si.append((char) ci);
-            }
-        } catch (IOException ex) {
-            return "";
-        }
-        return si.toString();
-    }
-
     public static void sendData(Socket socket, byte[] data) {
         byte[] dataSize = new byte[4];
         dataSize[0] = (byte) ((data.length >> 24) & 0xFF);
