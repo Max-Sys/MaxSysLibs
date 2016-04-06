@@ -61,5 +61,5 @@ public abstract class NetServer implements Runnable {
 
     }
 
-    public abstract Runnable cmdHandler(Socket socket, CmdArgs cmdArgs);
+    public abstract NetServerCmdHandler cmdHandler(Socket socket, CmdArgs cmdArgs);
 }
