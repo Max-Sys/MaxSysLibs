@@ -132,7 +132,7 @@ public class Bytes {
         }
         return timestamps;
     }
-
+// Заменить TreeMap на LinkedHashMap!!!
     public static byte[] treeMapTimestampDoubleToBytes(TreeMap<Timestamp, Double> treemap) {
         ByteBuffer bb = ByteBuffer.allocate(treemap.size() * 16);
         treemap.keySet().stream().forEach((ts) -> {
@@ -142,7 +142,7 @@ public class Bytes {
         return bb.array();
     }
 
-    public static TreeMap<Timestamp, Double> bytesTotreeMapTimestampDouble(byte[] bytes) {
+    public static TreeMap<Timestamp, Double> bytesToTreeMapTimestampDouble(byte[] bytes) {
         TreeMap<Timestamp, Double> treemap = new TreeMap<>();
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         for (int tmi = 0; tmi < bytes.length / 16; tmi++) {
