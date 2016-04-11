@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -132,24 +132,24 @@ public class Bytes {
         }
         return timestamps;
     }
-// Заменить TreeMap на LinkedHashMap!!!
-    public static byte[] treeMapTimestampDoubleToBytes(TreeMap<Timestamp, Double> treemap) {
-        ByteBuffer bb = ByteBuffer.allocate(treemap.size() * 16);
-        treemap.keySet().stream().forEach((ts) -> {
+
+    public static byte[] linkedHashMapTimestampDoubleToBytes(LinkedHashMap<Timestamp, Double> map) {
+        ByteBuffer bb = ByteBuffer.allocate(map.size() * 16);
+        map.keySet().stream().forEach((ts) -> {
             bb.putLong(ts.getTime());
-            bb.putDouble(treemap.get(ts));
+            bb.putDouble(map.get(ts));
         });
         return bb.array();
     }
 
-    public static TreeMap<Timestamp, Double> bytesToTreeMapTimestampDouble(byte[] bytes) {
-        TreeMap<Timestamp, Double> treemap = new TreeMap<>();
+    public static LinkedHashMap<Timestamp, Double> bytesToLinkedHashMapTimestampDouble(byte[] bytes) {
+        LinkedHashMap<Timestamp, Double> map = new LinkedHashMap<>();
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         for (int tmi = 0; tmi < bytes.length / 16; tmi++) {
             Timestamp ts = new Timestamp(bb.getLong());
             Double val = bb.getDouble();
-            treemap.put(ts, val);
+            map.put(ts, val);
         }
-        return treemap;
+        return map;
     }
 }
