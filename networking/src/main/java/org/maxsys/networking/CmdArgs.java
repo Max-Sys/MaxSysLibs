@@ -28,7 +28,7 @@ public class CmdArgs {
         // Getting cmd
         byte[] cmdBytesSize = new byte[4];
         bb.get(cmdBytesSize);
-        byte[] cmdBytes = new byte[Bytes.bytesToInt(cmdBytesSize)];
+        byte[] cmdBytes = new byte[Bytes.toInt(cmdBytesSize)];
         bb.get(cmdBytes);
         String cmdString = "";
         try {
@@ -41,7 +41,7 @@ public class CmdArgs {
         // Getting args
         byte[] argsBytesSize = new byte[4];
         bb.get(argsBytesSize);
-        this.args = new byte[Bytes.bytesToInt(argsBytesSize)];
+        this.args = new byte[Bytes.toInt(argsBytesSize)];
         bb.get(this.args);
     }
 
@@ -61,9 +61,9 @@ public class CmdArgs {
             Logger.getLogger(CmdArgs.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-        byte[] cmdBytesSize = Bytes.intToBytes(cmdBytes.length); // Size of cmdBytes
+        byte[] cmdBytesSize = Bytes.toBytes(cmdBytes.length); // Size of cmdBytes
 
-        byte[] argsBytesSize = Bytes.intToBytes(this.args.length); // Size of args
+        byte[] argsBytesSize = Bytes.toBytes(this.args.length); // Size of args
 
         ByteBuffer bytes = ByteBuffer.allocate(cmdBytesSize.length + cmdBytes.length + argsBytesSize.length + this.args.length); // All bytes
 
