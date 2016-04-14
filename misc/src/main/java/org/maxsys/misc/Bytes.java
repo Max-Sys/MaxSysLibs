@@ -177,27 +177,7 @@ public class Bytes {
         return timestamps;
     }
 
-    public static byte[] toBytes(LinkedHashMap<Timestamp, Double> map) {
-        ByteBuffer bb = ByteBuffer.allocate(map.size() * 16);
-        map.keySet().stream().forEach((ts) -> {
-            bb.putLong(ts.getTime());
-            bb.putDouble(map.get(ts));
-        });
-        return bb.array();
-    }
-
-    public static LinkedHashMap<Timestamp, Double> toLinkedHashMapTimestampDouble(byte[] bytes) {
-        LinkedHashMap<Timestamp, Double> map = new LinkedHashMap<>();
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-        for (int tmi = 0; tmi < bytes.length / 16; tmi++) {
-            Timestamp ts = new Timestamp(bb.getLong());
-            Double val = bb.getDouble();
-            map.put(ts, val);
-        }
-        return map;
-    }
-
-    static byte[] toBytes(ArrayList<Object> objects) {
+    public static byte[] toBytes(ArrayList objects) {
         //[[byte class (1,2,3,4...)][byte[] bytes]]...
         ArrayList<byte[]> bytesAL = new ArrayList<>();
         int bytesSize = 0;
@@ -249,7 +229,7 @@ public class Bytes {
         return bb.array();
     }
 
-    static ArrayList<Object> toObjects(byte[] bytes) {
+    public static ArrayList toObjects(byte[] bytes) {
         ArrayList<Object> objects = new ArrayList<>();
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         while (bb.hasRemaining()) {
