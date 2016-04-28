@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 public class SplashTaskWindow extends javax.swing.JDialog {
 
+    private static String labelText = "Please wait...";
+
     public SplashTaskWindow(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
@@ -25,7 +27,7 @@ public class SplashTaskWindow extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Please wait...");
+        jLabel1.setText("...");
 
         jProgressBar1.setIndeterminate(true);
 
@@ -64,8 +66,9 @@ public class SplashTaskWindow extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public static void run(SplashTask task) {
+    public static void run(SplashTask task, String labelText) {
         SplashTaskWindow sw = new SplashTaskWindow(null);
+        sw.jLabel1.setText(labelText);
         task.setLabel(sw.jLabel1);
         task.setLabel(sw.jProgressBar1);
         sw.setLocationRelativeTo(null);
@@ -80,6 +83,14 @@ public class SplashTaskWindow extends javax.swing.JDialog {
         }, "SplashTask").start();
 
         sw.setVisible(true);
+    }
+
+    public static void run(SplashTask task) {
+        run(task, SplashTaskWindow.labelText);
+    }
+
+    public static void setLabelText(String labelText) {
+        SplashTaskWindow.labelText = labelText;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
