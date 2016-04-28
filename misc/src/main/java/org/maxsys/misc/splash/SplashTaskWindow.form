@@ -77,9 +77,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JProgressBar" name="jProgressBar1">
-          <Properties>
-            <Property name="indeterminate" type="boolean" value="true"/>
-          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="SplashTaskWindow.progress"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

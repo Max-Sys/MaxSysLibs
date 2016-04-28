@@ -2,10 +2,12 @@ package org.maxsys.misc.splash;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JProgressBar;
 
 public class SplashTaskWindow extends javax.swing.JDialog {
 
     private static String labelText = "Please wait...";
+    private static final JProgressBar progress = new JProgressBar();
 
     public SplashTaskWindow(java.awt.Frame parent) {
         super(parent, true);
@@ -18,7 +20,7 @@ public class SplashTaskWindow extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        jProgressBar1 = SplashTaskWindow.progress;
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -28,8 +30,6 @@ public class SplashTaskWindow extends javax.swing.JDialog {
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("...");
-
-        jProgressBar1.setIndeterminate(true);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -67,14 +67,19 @@ public class SplashTaskWindow extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     public static void run(SplashTask task, String labelText) {
+        SplashTaskWindow.progress.setMinimum(0);
+        SplashTaskWindow.progress.setMaximum(100);
+        SplashTaskWindow.progress.setValue(0);
+        SplashTaskWindow.progress.setIndeterminate(false);
+
         SplashTaskWindow sw = new SplashTaskWindow(null);
         sw.jLabel1.setText(labelText);
         task.setLabel(sw.jLabel1);
-        task.setLabel(sw.jProgressBar1);
         sw.setLocationRelativeTo(null);
 
         new Thread(() -> {
             try {
+                SplashTaskWindow.progress.setIndeterminate(true);
                 task.doTask();
             } catch (Exception ex) {
                 Logger.getLogger(SplashTaskWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -82,7 +87,11 @@ public class SplashTaskWindow extends javax.swing.JDialog {
             sw.dispose();
         }, "SplashTask").start();
 
-        sw.setVisible(true);
+        try {
+            sw.setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(SplashTaskWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void run(SplashTask task) {
@@ -91,6 +100,28 @@ public class SplashTaskWindow extends javax.swing.JDialog {
 
     public static void setLabelText(String labelText) {
         SplashTaskWindow.labelText = labelText;
+    }
+
+    public static void setProgress(int percent) {
+        SplashTaskWindow.progress.setIndeterminate(false);
+        if (SplashTaskWindow.progress.getMaximum() >= percent) {
+            SplashTaskWindow.progress.setValue(percent);
+        }
+    }
+
+    public static void incProgress() {
+        SplashTaskWindow.progress.setIndeterminate(false);
+        if (SplashTaskWindow.progress.getValue() < SplashTaskWindow.progress.getMaximum()) {
+            SplashTaskWindow.progress.setValue(SplashTaskWindow.progress.getValue() + 1);
+        }
+    }
+
+    public static void setMaxProgress(int maxProgress) {
+        SplashTaskWindow.progress.setIndeterminate(false);
+        if (SplashTaskWindow.progress.getValue() > maxProgress) {
+            SplashTaskWindow.progress.setValue(maxProgress);
+        }
+        SplashTaskWindow.progress.setMaximum(maxProgress);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
