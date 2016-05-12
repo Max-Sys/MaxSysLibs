@@ -73,6 +73,12 @@ public class Sockets {
         Sockets.sendData(socket, cmdArgs.getCmdArgsData());
     }
 
+    public static void sendCmd(String serverAddress, int port, CmdArgs cmdArgs) {
+        Socket socket = Sockets.newClientSocket(serverAddress, port);
+        Sockets.sendCmd(socket, cmdArgs);
+        Sockets.closeSocket(socket);
+    }
+
     public static CmdArgs receiveCmd(Socket socket) {
         return new CmdArgs(Sockets.receiveData(socket));
     }
