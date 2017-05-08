@@ -91,6 +91,7 @@ public abstract class RTh implements Runnable {
         }, thread.getName() + " - S&F").start();
     }
 
+    @SuppressWarnings("deprecation")
     public final void Kill() {
         thread.stop();
     }

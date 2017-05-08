@@ -153,6 +153,9 @@ public class Bytes {
     }
 
     public static byte[] toBytes(Timestamp timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
         return ByteBuffer.allocate(8).putLong(timestamp.getTime()).array();
     }
 
@@ -207,13 +210,13 @@ public class Bytes {
                 case "java.util.LinkedHashMap": //class 5
                     bytesAL.add(new byte[]{5});
 
-                    ArrayList<Object> lhmObjests = new ArrayList<>();
+                    ArrayList<Object> lhmObjects = new ArrayList<>();
                     for (Object lhmK : ((LinkedHashMap) o).keySet()) {
-                        lhmObjests.add(lhmK);
-                        lhmObjests.add(((LinkedHashMap) o).get(lhmK));
+                        lhmObjects.add(lhmK);
+                        lhmObjects.add(((LinkedHashMap) o).get(lhmK));
                     }
 
-                    byte[] lhmObjectsBytes = toBytes(lhmObjests);
+                    byte[] lhmObjectsBytes = toBytes(lhmObjects);
                     byte[] lhmObjectsBytesSize = toBytes(lhmObjectsBytes.length);
 
                     bytesAL.add(lhmObjectsBytesSize);
@@ -229,7 +232,7 @@ public class Bytes {
         return bb.array();
     }
 
-    public static ArrayList toObjects(byte[] bytes) {
+    public static ArrayList<Object> toObjects(byte[] bytes) {
         ArrayList<Object> objects = new ArrayList<>();
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         while (bb.hasRemaining()) {
@@ -264,7 +267,7 @@ public class Bytes {
                     byte[] bytesLhm = new byte[toInt(bytesLhmSize)];
                     bb.get(bytesLhm);
                     ArrayList<Object> lhmObjects = toObjects(bytesLhm);
-                    LinkedHashMap lhm = new LinkedHashMap();
+                    LinkedHashMap<Object, Object> lhm = new LinkedHashMap<>();
                     for (int lhmi = 0; lhmi < lhmObjects.size(); lhmi++) {
                         lhm.put(lhmObjects.get(lhmi), lhmObjects.get(lhmi + 1));
                         lhmi++;

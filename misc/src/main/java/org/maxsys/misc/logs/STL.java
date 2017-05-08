@@ -1,14 +1,6 @@
 package org.maxsys.misc.logs;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Level;
@@ -89,6 +81,10 @@ public class STL {
 
     public static void setLogFileNamePrefix(String logFileNamePrefix) {
         STL.logFileNamePrefix = logFileNamePrefix;
+        File logsfolder = new File(logFileNamePrefix);
+        if (!logsfolder.exists()) {
+            logsfolder.mkdirs();
+        }
     }
 
 }
