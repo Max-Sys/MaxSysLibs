@@ -2,6 +2,7 @@ package org.maxsys.dblib;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,10 +17,10 @@ import java.util.logging.Logger;
 
 public class PDM {
 
-    private static ConcurrentHashMap<String, ConnInstance> connInstances = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, ConnInstance> connInstances = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<ConnState, Connection> Connections = new ConcurrentHashMap<>();
     private static ConnPoolWatcher connPoolWatcher = null;
-    private Statement st = null;
+    private PreparedStatement st = null;
     private ResultSet rs = null;
     private ConnState state = null;
 
@@ -211,8 +212,8 @@ public class PDM {
         }
         Connection conn = Connections.get(state);
         try {
-            st = conn.createStatement();
-            st.execute(sql);
+            st = conn.prepareStatement(sql);
+            st.execute();
         } catch (SQLException ex) {
             Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -235,8 +236,37 @@ public class PDM {
         }
         Connection conn = Connections.get(state);
         try {
-            st = conn.createStatement();
-            st.execute(sql, Statement.RETURN_GENERATED_KEYS);
+            st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            st.execute();
+            try (ResultSet rsgk = st.getGeneratedKeys()) {
+                rsgk.next();
+                ai = rsgk.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        } finally {
+            try {
+                st.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            state.setFree();
+        }
+        return ai;
+    }
+
+    public int executeNonQueryAI(String instance, String sql, Object[] params) {
+        int ai = -1;
+        state = getConnState(instance);
+        if (state == null) {
+            return -1;
+        }
+        Connection conn = Connections.get(state);
+        try {
+            st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            fillStatementParameters(params);
+            st.execute();
             try (ResultSet rsgk = st.getGeneratedKeys()) {
                 rsgk.next();
                 ai = rsgk.getInt(1);
@@ -263,10 +293,33 @@ public class PDM {
         Connection conn = Connections.get(state);
         int result;
         try {
-            st = conn.createStatement();
-            result = st.executeUpdate(sql);
+            st = conn.prepareStatement(sql);
+            result = st.executeUpdate();
         } catch (SQLException ex) {
-            //Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        } finally {
+            try {
+                st.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            state.setFree();
+        }
+        return result;
+    }
+
+    public int executeNonQueryUpdate(String instance, String sql, Object[] params) {
+        state = getConnState(instance);
+        if (state == null) {
+            return 0;
+        }
+        Connection conn = Connections.get(state);
+        int result;
+        try {
+            st = conn.prepareStatement(sql);
+            fillStatementParameters(params);
+            result = st.executeUpdate();
+        } catch (SQLException ex) {
             return -1;
         } finally {
             try {
@@ -286,8 +339,26 @@ public class PDM {
         }
         Connection conn = Connections.get(state);
         try {
-            st = conn.createStatement();
-            rs = st.executeQuery(sql);
+            st = conn.prepareStatement(sql);
+            rs = st.executeQuery();
+        } catch (SQLException ex) {
+            Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            state.setFree();
+            return null;
+        }
+        return rs;
+    }
+
+    public ResultSet getResultSet(String instance, String sql, Object[] params) {
+        state = getConnState(instance);
+        if (state == null) {
+            return null;
+        }
+        Connection conn = Connections.get(state);
+        try {
+            st = conn.prepareStatement(sql);
+            fillStatementParameters(params);
+            rs = st.executeQuery();
         } catch (SQLException ex) {
             Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
             state.setFree();
@@ -315,8 +386,37 @@ public class PDM {
         }
         Connection conn = Connections.get(state);
         try {
-            st = conn.createStatement();
-            rs = st.executeQuery(sql);
+            st = conn.prepareStatement(sql);
+            rs = st.executeQuery();
+            if (rs.next()) {
+                reto = rs.getObject(1);
+            }
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } finally {
+            try {
+                st.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            state.setFree();
+        }
+        return reto;
+    }
+
+    public Object getScalar(String instance, String sql, Object[] params) {
+        Object reto = null;
+        state = getConnState(instance);
+        if (state == null) {
+            return null;
+        }
+        Connection conn = Connections.get(state);
+        try {
+            st = conn.prepareStatement(sql);
+            fillStatementParameters(params);
+            rs = st.executeQuery();
             if (rs.next()) {
                 reto = rs.getObject(1);
             }
@@ -343,8 +443,8 @@ public class PDM {
         }
         Connection conn = Connections.get(state);
         try {
-            st = conn.createStatement();
-            rs = st.executeQuery(sql);
+            st = conn.prepareStatement(sql);
+            rs = st.executeQuery();
             if (rs.next()) {
                 ArrayList<Object> objs = new ArrayList<>();
                 for (int col = 1; col <= rs.getMetaData().getColumnCount(); col++) {
@@ -365,6 +465,49 @@ public class PDM {
             state.setFree();
         }
         return retos;
+    }
+
+    public Object[] getSingleRow(String instance, String sql, Object[] params) {
+        Object[] retos = null;
+        state = getConnState(instance);
+        if (state == null) {
+            return null;
+        }
+        Connection conn = Connections.get(state);
+        try {
+            st = conn.prepareStatement(sql);
+            fillStatementParameters(params);
+            rs = st.executeQuery();
+            if (rs.next()) {
+                ArrayList<Object> objs = new ArrayList<>();
+                for (int col = 1; col <= rs.getMetaData().getColumnCount(); col++) {
+                    objs.add(rs.getObject(col));
+                }
+                retos = objs.toArray();
+            }
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } finally {
+            try {
+                st.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(PDM.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            state.setFree();
+        }
+        return retos;
+    }
+
+    private void fillStatementParameters(Object[] params) throws SQLException {
+        if (params != null) {
+            int paramnum = 1;
+            for (Object param : params) {
+                st.setObject(paramnum, param);
+                paramnum++;
+            }
+        }
     }
 
     public String getInfo() {
